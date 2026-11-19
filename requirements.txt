@@ -1,0 +1,9 @@
+# Dependências diretas da interface e dos estudos, testadas com CPython 3.10 no Windows.
+# O arquivo lock registra também as dependências transitivas do ambiente limpo.
+streamlit==1.64.0
+pandas==2.2.3
+numpy==2.1.2
+matplotlib==3.10.0
+altair==6.2.2
+plotly==6.9.0
+Jinja2==3.1.6

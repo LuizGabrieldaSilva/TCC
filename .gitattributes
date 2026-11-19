@@ -1,0 +1,17 @@
+# Normalização de texto para intercâmbio entre Windows e outros sistemas.
+# Não executar renormalização em massa sem revisar as alterações existentes.
+* text=auto
+*.py text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.txt text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.ps1 text eol=crlf
+*.pdf binary
+*.png binary
+*.jpg binary
+*.zip binary
+
+# Preservar os bytes do arquivo histórico já publicado no primeiro commit.
+1_BRAYTON_IDEAL+PERDAS_SIMPLES.py -text

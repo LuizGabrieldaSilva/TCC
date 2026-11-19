@@ -1,0 +1,2 @@
+# Dependência adicional da visualização 3D, além do ambiente atual do projeto.
+plotly==6.9.0

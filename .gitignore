@@ -1,0 +1,33 @@
+# Ambientes virtuais e caches locais; não integram o código do projeto.
+.venv/
+.venv-*/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.streamlit/secrets.toml
+
+# Credenciais locais. Um exemplo sem segredos pode ser versionado.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Livros locais: publicar bibliografia e links, não as cópias dos PDFs.
+/referências/
+/referencias/
+
+# Saídas reproduzíveis e cópias de segurança; não são o código-fonte.
+/saida_dxf/
+/checkpoints/
+*.bak
+*.backup
+*.tmp
+~$*
+
+# Rascunhos históricos e anotações locais, fora da aplicação atual.
+/Arquivos de apoio/
+/engine/Temporários/
+/PARA FAZER.txt
+
+# Não excluir *.json: os coeficientes NASA em engine/combustor são necessários.
