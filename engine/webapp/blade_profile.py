@@ -153,7 +153,7 @@ def exibir_perfil_2d(radial, perfis, componente, estagio, secao, fileira):
     perfil = perfis[estagio][secao][fileira]
     fig = figura_perfil(perfil, camadas, normalizar, orientar)
     desenho, sequencia = st.columns([3, 1])
-    desenho.pyplot(figura_br(fig), use_container_width=True)
+    desenho.pyplot(figura_br(fig), width="stretch")
     plt.close(fig)
     sequencia.markdown('**Da entrada às coordenadas**\n\n'
         '1. Ângulos do escoamento.\n2. Incidência zero e hipótese de desvio.\n'
@@ -163,7 +163,7 @@ def exibir_perfil_2d(radial, perfis, componente, estagio, secao, fileira):
                       'Turbina: desvio imposto como zero, sem correlação de desvio de turbina.')
     if 'Espessura' in camadas:
         fig = figura_espessura(perfil)
-        st.pyplot(figura_br(fig), use_container_width=True)
+        st.pyplot(figura_br(fig), width="stretch")
         plt.close(fig)
     st.caption(
         'Corda: segmento entre os bordos. Câmber: linha média geométrica. Espessura: distância normal '
@@ -179,7 +179,7 @@ def exibir_perfil_2d(radial, perfis, componente, estagio, secao, fileira):
     if st.checkbox('Sobrepor cubo, região do raio médio e ponta', key=f'perfil_2d_comparar_{componente}'):
         secoes = secoes_comparacao(radial, estagio-1)
         fig = figura_comparacao(perfis[estagio], secoes, fileira, normalizar, orientar)
-        st.pyplot(figura_br(fig), use_container_width=True)
+        st.pyplot(figura_br(fig), width="stretch")
         plt.close(fig)
         st.table(tabela_br(pd.DataFrame([
             {'Seção': s, 'Raio (cm)': radial.r[estagio-1][s]*100,
