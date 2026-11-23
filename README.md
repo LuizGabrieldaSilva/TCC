@@ -7,7 +7,8 @@ Ferramenta didática em Python e Streamlit que conecta ciclo Brayton, compressor
 - Windows de 64 bits e **CPython 3.10**. A verificação de instalação usa Python **3.10.8**; isso identifica o ambiente testado, não exige instalar especificamente esse patch antigo.
 - Navegador com JavaScript e WebGL para a montagem 3D.
 - Internet para obter o Python e instalar as dependências. O cálculo local não depende de uma conta Streamlit, GitHub ou serviço de nuvem.
-- Outros sistemas e versões de Python ainda não foram verificados nesta entrega.
+- **Linux Ubuntu 22.04 com CPython 3.12**: instalação e testes automatizados conferidos no GitHub Actions. O fluxo inclui cálculo de referência, mistura NASA, propriedades, recuperação de casos, CSV/DXF, figuras, sensibilidade e montagem 3D via AppTest. Isso não substitui inspeção visual no navegador nem teste no ambiente exato da hospedagem.
+- Outros sistemas e versões de Python não foram verificados nesta entrega. O lock Windows/Python 3.10 não deve ser tratado como lock Linux/Python 3.12.
 
 Os sete pacotes diretos e suas versões estão em [requirements.txt](requirements.txt). [requirements-lock-windows-py310.txt](requirements-lock-windows-py310.txt) registra também as dependências transitivas do ambiente limpo de referência. O lock não inclui o instalador Python, o navegador ou o FreeCAD.
 
@@ -139,3 +140,13 @@ Os scripts de sensibilidade, plots, baseline e macros devem ser executados de `N
 O modelo é preliminar: propriedades constantes e perdas simplificadas; vórtice livre; perfis paramétricos. Não resolve CFD, projeto estrutural, resfriamento de turbina, química detalhada ou difusor compressor–combustor. Leia as limitações e os avisos na interface. As exportações não são documentação de fabricação.
 
 A instalação limpa, as versões e o teste de portabilidade estão registrados em [VERIFICACAO_INSTALACAO_REPRODUZIVEL.md](engine/estudos/VERIFICACAO_INSTALACAO_REPRODUZIVEL.md).
+
+## Verificação em Linux e preparação para hospedagem
+
+O workflow [Compatibilidade Linux](.github/workflows/compatibilidade-linux.yml) executa em Ubuntu 22.04/Python 3.12 com as dependências de `requirements.txt`. A [primeira execução conferida](https://github.com/LuizGabrieldaSilva/TCC/actions/runs/45109418315) passou. O código físico não foi alterado nessa preparação.
+
+O workflow compara a potência líquida com a referência Windows/Python 3.10.8 do modelo publicado em `636047f`: 2.392.370,324569512 W, usando tolerância relativa de 1e-9 e absoluta de 1e-6 W. Essa comparação é uma regressão numérica entre ambientes, não validação física. Se o modelo ou o caso de referência mudar intencionalmente, a referência do teste deve ser revisada e justificada.
+
+Os relatórios JSON, a lista de dependências instaladas e a medição de tempo/pico de memória do processo AppTest ficam no artefato da execução, com retenção configurada de 14 dias. Essa medição não representa carga simultânea de usuários, memória do navegador nem garante atendimento aos limites de um plano de hospedagem. Baixe as evidências caso precise conservá-las além desse prazo.
+
+Para uma futura implantação no Streamlit Community Cloud, usar a raiz deste repositório, a branch `main`, o arquivo `engine/webapp/streamlit_app.py`, o `requirements.txt` da raiz e Python 3.12, caso disponível na implantação. A compatibilidade com o serviço e a inspeção dos gráficos/downloads no navegador ainda precisam ser conferidas. FreeCAD e os livros não são necessários para executar a interface.
