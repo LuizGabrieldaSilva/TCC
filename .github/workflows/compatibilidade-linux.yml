@@ -1,0 +1,79 @@
+name: Compatibilidade Linux
+
+on:
+  push:
+    branches: [main, verificacao/linux-python312]
+    paths:
+      - 'engine/**'
+      - 'requirements.txt'
+      - '.github/workflows/compatibilidade-linux.yml'
+  pull_request:
+    paths:
+      - 'engine/**'
+      - 'requirements.txt'
+      - '.github/workflows/compatibilidade-linux.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+    env:
+      MPLBACKEND: Agg
+      PYTHONUTF8: '1'
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Instalar dependencias declaradas
+        run: |
+          python -m pip install -r requirements.txt
+          python -m pip check
+          mkdir -p relatorios
+          python -m pip freeze > relatorios/dependencias-linux.txt
+      - name: Conferir mistura NASA e conservacao
+        run: python -m engine.estudos.verificar_mistura_gases --saida relatorios/mistura.json
+      - name: Conferir propriedades por regiao e recuperacao de casos
+        run: python -m engine.estudos.verificar_propriedades_ar_gases --saida relatorios/propriedades.json
+      - name: Conferir calculo, arquivos e interface
+        run: |
+          /usr/bin/time -v -o relatorios/recursos-interface.txt \
+            python -m engine.estudos.verificar_instalacao --interface --saida relatorios/interface.json
+      - name: Registrar comparacao com referencia Windows
+        run: |
+          python - <<'PY'
+          import json
+          import math
+          from pathlib import Path
+          dados = json.loads(Path('relatorios/interface.json').read_text(encoding='utf-8'))
+          # Resultado Windows/Python 3.10.8 conferido em 20/11/2026,
+          # modelo fisico publicado no commit 636047f.
+          referencia = 2392370.324569512
+          comparacao = {
+              'referencia_windows_W': referencia,
+              'resultado_linux_W': dados['potencia_liquida_W'],
+              'diferenca_W': dados['potencia_liquida_W'] - referencia,
+              'tolerancia_relativa': 1e-9,
+              'tolerancia_absoluta_W': 1e-6,
+              'coincide': math.isclose(dados['potencia_liquida_W'], referencia, rel_tol=1e-9, abs_tol=1e-6),
+          }
+          Path('relatorios/comparacao-windows.json').write_text(json.dumps(comparacao, indent=2), encoding='utf-8')
+          print(json.dumps(comparacao, indent=2))
+          assert comparacao['coincide'], 'Resultado diferente da referencia Windows; revisar o modelo e a referencia antes de atualizar este teste.'
+          assert dados['estagios'] == {'compressor': 8, 'turbina': 3}
+          PY
+      - name: Guardar evidencias da execucao
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: verificacao-linux-python312
+          path: relatorios/
+          if-no-files-found: warn
+          retention-days: 14
